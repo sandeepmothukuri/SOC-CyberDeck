@@ -348,17 +348,6 @@ All maintenance tasks are encapsulated in ready-to-run helper scripts:
 
 ---
 
-## 🤝 Contributing & Community
-
-Community contributions, feedback, and custom Shuffle playbooks are warmly welcomed!
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/NewPlaybook`)
-3. Commit your Changes (`git commit -m 'Add new triage playbook'`)
-4. Push to the Branch (`git push origin feature/NewPlaybook`)
-5. Open a Pull Request
-
----
-
 ## 📄 License & Attribution
 
 Distributed under the MIT License. See [LICENSE](file:///LICENSE) for details.
