@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070b14"/>
+      <stop offset="50%" stop-color="#0d1527"/>
+      <stop offset="100%" stop-color="#0a101f"/>
+    </linearGradient>
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe"/>
+      <stop offset="100%" stop-color="#4facfe"/>
+    </linearGradient>
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38ef7d"/>
+      <stop offset="100%" stop-color="#11998e"/>
+    </linearGradient>
+    <linearGradient id="card-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#162238" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0f192b" stop-opacity="0.95"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1f2d47" stroke-width="0.75" opacity="0.35"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="360" fill="url(#bg-grad)" rx="16"/>
+  <rect width="1200" height="360" fill="url(#grid)" rx="16"/>
+
+  <!-- Subtle glowing circuits -->
+  <path d="M 0 180 L 150 180 L 200 230 L 400 230 M 800 130 L 1000 130 L 1050 180 L 1200 180" stroke="#00f2fe" stroke-width="1.5" fill="none" opacity="0.25"/>
+  <circle cx="200" cy="230" r="3" fill="#00f2fe" opacity="0.5"/>
+  <circle cx="1050" cy="180" r="3" fill="#00f2fe" opacity="0.5"/>
+
+  <!-- Shield Badge Icon -->
+  <g transform="translate(60, 75)">
+    <polygon points="50,5 95,22 95,65 50,95 5,65 5,22" fill="#132038" stroke="url(#cyan-glow)" stroke-width="3" filter="url(#glow)"/>
+    <path d="M 50 18 L 80 32 L 80 62 L 50 82 L 20 62 L 20 32 Z" fill="#0b1322" stroke="#00f2fe" stroke-width="1.5"/>
+    <!-- Terminal prompt inside shield -->
+    <path d="M 36 45 L 46 51 L 36 57 M 49 57 L 62 57" stroke="#38ef7d" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Title & Subtitle -->
+  <text x="185" y="115" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="44" fill="#ffffff" letter-spacing="1.5">
+    SOC-<tspan fill="url(#cyan-glow)">CYBERDECK</tspan>
+  </text>
+  
+  <text x="185" y="152" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="500" font-size="19" fill="#94a3b8" letter-spacing="0.5">
+    Turnkey Blue Team Cyber Range &amp; Central Command Console
+  </text>
+
+  <!-- Tagline Features -->
+  <g transform="translate(185, 175)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="180" height="28" rx="14" fill="#101c33" stroke="#223659" stroke-width="1"/>
+    <circle cx="14" cy="14" r="4" fill="#38ef7d"/>
+    <text x="26" y="19" font-family="sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">15+ Integrated Tools</text>
+
+    <!-- Pill 2 -->
+    <rect x="195" y="0" width="195" height="28" rx="14" fill="#101c33" stroke="#223659" stroke-width="1"/>
+    <circle cx="209" cy="14" r="4" fill="#00f2fe"/>
+    <text x="221" y="19" font-family="sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">Flask Command Portal</text>
+
+    <!-- Pill 3 -->
+    <rect x="405" y="0" width="175" height="28" rx="14" fill="#101c33" stroke="#223659" stroke-width="1"/>
+    <circle cx="419" cy="14" r="4" fill="#eab308"/>
+    <text x="431" y="19" font-family="sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">Zero-Coding Setup</text>
+
+    <!-- Pill 4 -->
+    <rect x="595" y="0" width="185" height="28" rx="14" fill="#101c33" stroke="#223659" stroke-width="1"/>
+    <circle cx="609" cy="14" r="4" fill="#ec4899"/>
+    <text x="621" y="19" font-family="sans-serif" font-size="12" font-weight="600" fill="#cbd5e1">Caldera Emulation C2</text>
+  </g>
+
+  <!-- Quick Tool Matrix Strip (Bottom) -->
+  <g transform="translate(60, 230)">
+    <rect width="1080" height="90" rx="12" fill="url(#card-grad)" stroke="#1e293b" stroke-width="1.5"/>
+
+    <!-- Tool Icons / Mini labels -->
+    <!-- Col 1 -->
+    <g transform="translate(25, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">SIEM &amp; XDR</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Wazuh</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7001</text>
+    </g>
+
+    <!-- Col 2 -->
+    <g transform="translate(160, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">PCAP / NSM</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Arkime</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7008</text>
+    </g>
+
+    <!-- Col 3 -->
+    <g transform="translate(295, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">NIDS ENGINE</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Suricata</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7015</text>
+    </g>
+
+    <!-- Col 4 -->
+    <g transform="translate(430, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">ENDPOINT DFIR</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Velociraptor</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7000</text>
+    </g>
+
+    <!-- Col 5 -->
+    <g transform="translate(585, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">FLEET OSQUERY</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">FleetDM</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7007</text>
+    </g>
+
+    <!-- Col 6 -->
+    <g transform="translate(735, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">ADVERSARY C2</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Caldera</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7009</text>
+    </g>
+
+    <!-- Col 7 -->
+    <g transform="translate(875, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">SOAR AUTOMATION</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">Shuffle</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7002</text>
+    </g>
+
+    <!-- Col 8 -->
+    <g transform="translate(1010, 20)">
+      <text x="0" y="16" font-family="monospace" font-size="11" font-weight="bold" fill="#38bdf8">CTI INTEL</text>
+      <text x="0" y="38" font-family="sans-serif" font-size="15" font-weight="bold" fill="#f8fafc">MISP</text>
+      <text x="0" y="55" font-family="monospace" font-size="11" fill="#64748b">Port 7003</text>
+    </g>
+  </g>
+</svg>

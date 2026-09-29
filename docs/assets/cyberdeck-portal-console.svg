@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b111e"/>
+      <stop offset="100%" stop-color="#080d17"/>
+    </linearGradient>
+    <linearGradient id="topbar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#111c2e"/>
+      <stop offset="100%" stop-color="#0f1726"/>
+    </linearGradient>
+    <linearGradient id="card-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#162236"/>
+      <stop offset="100%" stop-color="#111a2a"/>
+    </linearGradient>
+    <linearGradient id="card-hover" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#4facfe" stop-opacity="0.8"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Frame Background -->
+  <rect width="1200" height="780" fill="url(#bg)" rx="14" filter="url(#shadow)"/>
+  <rect width="1200" height="780" fill="none" stroke="#1e293b" stroke-width="1.5" rx="14"/>
+
+  <!-- Browser Header -->
+  <rect width="1200" height="42" fill="#090e18" rx="14 14 0 0"/>
+  <circle cx="24" cy="21" r="5.5" fill="#ef4444"/>
+  <circle cx="42" cy="21" r="5.5" fill="#eab308"/>
+  <circle cx="60" cy="21" r="5.5" fill="#22c55e"/>
+
+  <!-- URL Bar -->
+  <rect x="180" y="8" width="580" height="26" rx="6" fill="#131e30" stroke="#1f2d47" stroke-width="1"/>
+  <text x="200" y="25" font-family="monospace" font-size="12" fill="#00f2fe">🔒 https://soc-cyberdeck.local:5443</text>
+  <text x="520" y="25" font-family="monospace" font-size="11" fill="#64748b">[SSL Secured | Port 5443]</text>
+
+  <!-- Navigation / Brand Bar -->
+  <rect y="42" width="1200" height="65" fill="url(#topbar)" stroke="#1e293b" stroke-width="1"/>
+  <text x="35" y="82" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="22" fill="#ffffff" letter-spacing="1">
+    🛡️ SOC-<tspan fill="#38bdf8">CYBERDECK</tspan> <tspan font-weight="normal" font-size="14" fill="#94a3b8">| Tactical Operations Console</tspan>
+  </text>
+
+  <!-- Status Badges in Nav -->
+  <g transform="translate(780, 58)">
+    <!-- Node status -->
+    <rect x="0" y="0" width="165" height="32" rx="6" fill="#0e2a22" stroke="#15803d" stroke-width="1"/>
+    <circle cx="16" cy="16" r="4.5" fill="#22c55e"/>
+    <text x="28" y="21" font-family="sans-serif" font-size="12" font-weight="600" fill="#4ade80">30 Services Healthy</text>
+
+    <!-- Host IP -->
+    <rect x="180" y="0" width="200" height="32" rx="6" fill="#132035" stroke="#1d4ed8" stroke-width="1"/>
+    <text x="195" y="21" font-family="monospace" font-size="12" fill="#60a5fa">Host: 192.168.1.100</text>
+  </g>
+
+  <!-- Live Telemetry KPI Bar -->
+  <g transform="translate(35, 125)">
+    <!-- KPI 1 -->
+    <rect x="0" y="0" width="260" height="65" rx="8" fill="url(#card-bg)" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#64748b">CONTAINER RUNTIME</text>
+    <text x="16" y="50" font-family="sans-serif" font-size="20" font-weight="bold" fill="#22c55e">30 / 30 Up</text>
+    <text x="140" y="50" font-family="monospace" font-size="11" fill="#94a3b8">Docker Compose v2</text>
+
+    <!-- KPI 2 -->
+    <rect x="290" y="0" width="260" height="65" rx="8" fill="url(#card-bg)" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#64748b">HOST MEMORY USAGE</text>
+    <text x="16" y="50" font-family="sans-serif" font-size="20" font-weight="bold" fill="#38bdf8">14.2 GB</text>
+    <text x="110" y="50" font-family="monospace" font-size="11" fill="#94a3b8">of 32 GB (44%)</text>
+
+    <!-- KPI 3 -->
+    <rect x="580" y="0" width="260" height="65" rx="8" fill="url(#card-bg)" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#64748b">NETWORK TRAFFIC SENSOR</text>
+    <text x="16" y="50" font-family="sans-serif" font-size="20" font-weight="bold" fill="#eab308">eth0 (Sniffing)</text>
+    <text x="175" y="50" font-family="monospace" font-size="11" fill="#94a3b8">Suricata/Arkime</text>
+
+    <!-- KPI 4 -->
+    <rect x="870" y="0" width="260" height="65" rx="8" fill="url(#card-bg)" stroke="#1e293b" stroke-width="1"/>
+    <text x="16" y="24" font-family="sans-serif" font-size="11" font-weight="bold" fill="#64748b">SOAR PLAYBOOK ENGINE</text>
+    <text x="16" y="50" font-family="sans-serif" font-size="20" font-weight="bold" fill="#a855f7">Shuffle Ready</text>
+    <text x="170" y="50" font-family="monospace" font-size="11" fill="#94a3b8">Pre-wired APIs</text>
+  </g>
+
+  <!-- Interactive Security Tool Grid -->
+  <g transform="translate(35, 210)">
+    <text x="0" y="16" font-family="sans-serif" font-size="14" font-weight="bold" fill="#cbd5e1" letter-spacing="0.5">LAUNCHPAD: CORE OPERATIONAL CONSOLES</text>
+
+    <!-- Tool Card 1: Wazuh -->
+    <g transform="translate(0, 30)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#10b981" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Wazuh SIEM</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Host Telemetry &amp; XDR Dashboard</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#064e3b"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#34d399">Port 7001</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTPS | admin</text>
+    </g>
+
+    <!-- Tool Card 2: Arkime -->
+    <g transform="translate(290, 30)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#14b8a6" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Arkime PCAP</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Full Packet Capture &amp; Session Search</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#134e4a"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#2dd4bf">Port 7008</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTP | admin</text>
+    </g>
+
+    <!-- Tool Card 3: Velociraptor -->
+    <g transform="translate(580, 30)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#3b82f6" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Velociraptor</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Endpoint DFIR &amp; VQL Live Hunting</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#1e3a8a"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#60a5fa">Port 7000</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTPS | admin</text>
+    </g>
+
+    <!-- Tool Card 4: Caldera -->
+    <g transform="translate(870, 30)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#dc2626" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">MITRE Caldera</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Adversary Emulation &amp; C2 Testing</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#7f1d1d"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#f87171">Port 7009</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTP | admin</text>
+    </g>
+
+    <!-- Row 2 -->
+    <!-- Tool Card 5: Suricata / EveBox -->
+    <g transform="translate(0, 160)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#ec4899" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">EveBox / Suricata</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Network IDS Alert Triage Inbox</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#831843"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#f472b6">Port 7015</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTP | No Auth</text>
+    </g>
+
+    <!-- Tool Card 6: FleetDM -->
+    <g transform="translate(290, 160)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#8b5cf6" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">FleetDM / osquery</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Fleetwide Relational SQL Telemetry</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#4c1d95"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#c084fc">Port 7007</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTP | Config</text>
+    </g>
+
+    <!-- Tool Card 7: TheHive & Cortex -->
+    <g transform="translate(580, 160)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">TheHive &amp; Cortex</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">SIRP Cases &amp; Automated Analyzers</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#164e63"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#22d3ee">Port 7005</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTP | admin</text>
+    </g>
+
+    <!-- Tool Card 8: Shuffle SOAR -->
+    <g transform="translate(870, 160)">
+      <rect width="265" height="110" rx="8" fill="url(#card-bg)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="16" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Shuffle SOAR</text>
+      <text x="16" y="50" font-family="sans-serif" font-size="12" fill="#94a3b8">Visual Security Playbook Automation</text>
+      <rect x="16" y="70" width="80" height="22" rx="4" fill="#78350f"/>
+      <text x="24" y="85" font-family="monospace" font-size="11" fill="#fbbf24">Port 7002</text>
+      <text x="110" y="85" font-family="monospace" font-size="11" fill="#64748b">HTTPS | Init</text>
+    </g>
+  </g>
+
+  <!-- Agent Deployment Center (Bottom Interactive Feature) -->
+  <g transform="translate(35, 500)">
+    <rect width="1135" height="235" rx="10" fill="#0d1524" stroke="#1f2d47" stroke-width="1.5"/>
+    <text x="24" y="35" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">🚀 Instant Agent Deployment Center</text>
+    <text x="24" y="55" font-family="sans-serif" font-size="12" fill="#94a3b8">Deploy sensors to Windows, Linux, or macOS test endpoints with pre-populated IP bindings and certificates.</text>
+
+    <!-- Linux Tab -->
+    <rect x="24" y="75" width="1087" height="42" rx="6" fill="#090e18" stroke="#1e293b" stroke-width="1"/>
+    <text x="40" y="101" font-family="monospace" font-size="12" fill="#38bdf8">Wazuh Linux (Debian/Ubuntu):</text>
+    <text x="250" y="101" font-family="monospace" font-size="11" fill="#a7f3d0">curl -so wazuh-agent.deb https://192.168.1.100:5443/agents/wazuh &amp;&amp; sudo WAZUH_MANAGER='192.168.1.100' dpkg -i wazuh-agent.deb</text>
+
+    <!-- Windows Tab -->
+    <rect x="24" y="127" width="1087" height="42" rx="6" fill="#090e18" stroke="#1e293b" stroke-width="1"/>
+    <text x="40" y="153" font-family="monospace" font-size="12" fill="#38bdf8">Velociraptor Windows:</text>
+    <text x="250" y="153" font-family="monospace" font-size="11" fill="#a7f3d0">Invoke-WebRequest -Uri https://192.168.1.100:5443/agents/velociraptor.exe -OutFile velociraptor.exe; .\velociraptor.exe service install</text>
+
+    <!-- Caldera Tab -->
+    <rect x="24" y="179" width="1087" height="42" rx="6" fill="#090e18" stroke="#1e293b" stroke-width="1"/>
+    <text x="40" y="205" font-family="monospace" font-size="12" fill="#38bdf8">Caldera Sandcat (C2):</text>
+    <text x="250" y="205" font-family="monospace" font-size="11" fill="#a7f3d0">curl -s -X POST -H "file:sandcat.go" http://192.168.1.100:7009/file/download &gt; splunkd &amp;&amp; chmod +x splunkd &amp;&amp; ./splunkd -server http://192.168.1.100:7009</text>
+  </g>
+</svg>
