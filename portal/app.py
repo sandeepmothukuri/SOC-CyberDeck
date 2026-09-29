@@ -2652,10 +2652,381 @@ def sync_misp_feeds():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+# ─────────────────────────────────────────────────────────────
+# NEW ROUTES: Alerts, Quick Actions, Network, Threat Summary,
+#             Container Logs, SOC Playbooks, Resource Usage
+# ─────────────────────────────────────────────────────────────
+
+@app.route('/api/alerts')
+def get_alerts():
+    """Get system alerts based on container status and changelog"""
+    try:
+        alerts = []
+        all_containers = container_monitor.get_all_container_status()
+        tool_containers = container_monitor.get_tool_container_status()
+
+        # Alert for stopped SOC tools
+        critical_tools = ['wazuh', 'misp', 'velociraptor', 'arkime', 'suricata']
+        for tool in critical_tools:
+            if tool in tool_containers:
+                status = tool_containers[tool].get('status', 'not_found')
+                if status in ('stopped', 'not_found'):
+                    alerts.append({
+                        "id": f"alert-{tool}",
+                        "severity": "high",
+                        "title": f"{tool.capitalize()} is {status.replace('_', ' ')}",
+                        "message": f"Security tool '{tool}' is not running. SOC coverage may be reduced.",
+                        "timestamp": datetime.now().isoformat(),
+                        "category": "container",
+                        "action": f"Start {tool}"
+                    })
+
+        # Alert for low running container ratio
+        total = len(all_containers)
+        running = len([c for c in all_containers.values() if c['status'] == 'running'])
+        if total > 0:
+            health_pct = round(running / total * 100, 1)
+            if health_pct < 50:
+                alerts.append({
+                    "id": "alert-health-critical",
+                    "severity": "critical",
+                    "title": "Critical: System Health Below 50%",
+                    "message": f"Only {running}/{total} containers are running ({health_pct}%). Immediate action required.",
+                    "timestamp": datetime.now().isoformat(),
+                    "category": "system",
+                    "action": "Force Start All"
+                })
+            elif health_pct < 80:
+                alerts.append({
+                    "id": "alert-health-warning",
+                    "severity": "medium",
+                    "title": "Warning: System Health Degraded",
+                    "message": f"{running}/{total} containers running ({health_pct}%). Some SOC capabilities may be limited.",
+                    "timestamp": datetime.now().isoformat(),
+                    "category": "system",
+                    "action": "Check Status"
+                })
+
+        # Recent error entries from changelog
+        recent_errors = changelog_manager.get_entries(limit=20, level="error")
+        for err in recent_errors[-3:]:
+            alerts.append({
+                "id": f"alert-log-{err['id']}",
+                "severity": "medium",
+                "title": f"System Error: {err['action'].replace('_', ' ').title()}",
+                "message": err['details'][:120],
+                "timestamp": err['timestamp'],
+                "category": "log",
+                "action": "View Logs"
+            })
+
+        return jsonify({
+            "alerts": alerts,
+            "total": len(alerts),
+            "critical": len([a for a in alerts if a['severity'] == 'critical']),
+            "high": len([a for a in alerts if a['severity'] == 'high']),
+            "medium": len([a for a in alerts if a['severity'] == 'medium']),
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting alerts: {e}")
+        return jsonify({"alerts": [], "total": 0, "error": str(e)}), 500
+
+
+@app.route('/api/quick-actions', methods=['GET'])
+def get_quick_actions():
+    """Get available quick action definitions for the dashboard"""
+    actions = [
+        {"id": "restart-portal", "label": "Restart Portal",
+         "icon": "fas fa-sync", "color": "primary",
+         "endpoint": "/api/containers/cyberdeck-portal/restart",
+         "method": "POST", "description": "Restart the CyberDeck portal container"},
+        {"id": "force-start-all", "label": "Force Start All",
+         "icon": "fas fa-play-circle", "color": "success",
+         "endpoint": "/api/force-start",
+         "method": "POST", "description": "Attempt to start all stopped containers"},
+        {"id": "container-stats", "label": "Refresh Stats",
+         "icon": "fas fa-chart-bar", "color": "info",
+         "endpoint": "/api/containers/stats",
+         "method": "GET", "description": "Refresh all container statistics"},
+        {"id": "sync-intel", "label": "Sync Threat Intel",
+         "icon": "fas fa-brain", "color": "warning",
+         "endpoint": "/api/misp/sync-feeds",
+         "method": "POST", "description": "Sync MISP threat intelligence feeds"},
+        {"id": "update-rules", "label": "Update Hunting Rules",
+         "icon": "fas fa-crosshairs", "color": "danger",
+         "endpoint": "/api/hunting/update",
+         "method": "POST", "description": "Pull latest YARA & Sigma rules from GitHub"},
+        {"id": "export-logs", "label": "Export Audit Log",
+         "icon": "fas fa-download", "color": "secondary",
+         "endpoint": "/api/changelog?limit=500",
+         "method": "GET", "description": "Export the full system audit log (JSON)"},
+    ]
+    return jsonify({"actions": actions})
+
+
+@app.route('/api/network/overview')
+def get_network_overview():
+    """Get Docker network overview"""
+    try:
+        result = subprocess.run(
+            ['docker', 'network', 'ls', '--format',
+             '{{.Name}}\t{{.Driver}}\t{{.Scope}}'],
+            capture_output=True, text=True, timeout=10
+        )
+        networks = []
+        if result.returncode == 0:
+            for line in result.stdout.strip().split('\n'):
+                if line.strip():
+                    parts = line.split('\t')
+                    if len(parts) >= 3:
+                        networks.append({
+                            "name": parts[0],
+                            "driver": parts[1],
+                            "scope": parts[2]
+                        })
+
+        # Inspect cyberdeck-net specifically
+        net_inspect = subprocess.run(
+            ['docker', 'network', 'inspect', 'cyberdeck-net',
+             '--format', '{{.IPAM.Config}}'],
+            capture_output=True, text=True, timeout=5
+        )
+        cyberdeck_subnet = net_inspect.stdout.strip() if net_inspect.returncode == 0 else "N/A"
+
+        return jsonify({
+            "networks": networks,
+            "total": len(networks),
+            "cyberdeck_network": "cyberdeck-net",
+            "cyberdeck_subnet": cyberdeck_subnet,
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting network overview: {e}")
+        return jsonify({"networks": [], "error": str(e)}), 500
+
+
+@app.route('/api/threat-summary')
+def get_threat_summary():
+    """Get a threat intelligence summary from MISP if available"""
+    try:
+        misp_stats = None
+        try:
+            import requests
+            misp_url = os.environ.get('MISP_BASE_URL', 'https://misp-core')
+            resp = requests.get(
+                f"{misp_url}/events/restSearch",
+                headers={'Authorization': 'changeme', 'Accept': 'application/json'},
+                verify=False, timeout=5
+            )
+            if resp.status_code == 200:
+                events = resp.json().get('response', [])
+                misp_stats = {
+                    "total_events": len(events),
+                    "status": "connected"
+                }
+        except Exception:
+            misp_stats = {"status": "offline", "total_events": 0}
+
+        # Changelog-based summary
+        all_entries = changelog_manager.get_entries(limit=200)
+        container_events = [e for e in all_entries if 'container' in e['action']]
+        error_events = [e for e in all_entries if e['level'] == 'error']
+
+        return jsonify({
+            "misp": misp_stats,
+            "activity_summary": {
+                "total_events": len(all_entries),
+                "container_changes": len(container_events),
+                "errors": len(error_events),
+                "last_24h": len([e for e in all_entries
+                                 if changelog_manager._is_recent(e['timestamp'])])
+            },
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting threat summary: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/containers/<container_name>/logs')
+def get_container_logs(container_name):
+    """Get last N lines of logs from a container"""
+    try:
+        lines = request.args.get('lines', 50, type=int)
+        result = subprocess.run(
+            ['docker', 'logs', '--tail', str(lines), container_name],
+            capture_output=True, text=True, timeout=15
+        )
+        combined = (result.stdout + result.stderr).strip()
+        log_lines = combined.split('\n') if combined else []
+        return jsonify({
+            "container": container_name,
+            "lines": log_lines,
+            "total": len(log_lines),
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting logs for {container_name}: {e}")
+        return jsonify({"lines": [], "error": str(e)}), 500
+
+
+@app.route('/api/system/resource-usage')
+def get_resource_usage():
+    """Get Docker container resource usage (top-level)"""
+    try:
+        result = subprocess.run(
+            ['docker', 'stats', '--no-stream', '--format',
+             '{{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}\t{{.NetIO}}'],
+            capture_output=True, text=True, timeout=20
+        )
+        containers = []
+        if result.returncode == 0:
+            for line in result.stdout.strip().split('\n'):
+                if line.strip():
+                    parts = line.split('\t')
+                    if len(parts) >= 5:
+                        containers.append({
+                            "name": parts[0],
+                            "cpu": parts[1],
+                            "mem_usage": parts[2],
+                            "mem_pct": parts[3],
+                            "net_io": parts[4]
+                        })
+        return jsonify({
+            "containers": containers,
+            "total": len(containers),
+            "timestamp": datetime.now().isoformat()
+        })
+    except Exception as e:
+        logger.error(f"Error getting resource usage: {e}")
+        return jsonify({"containers": [], "error": str(e)}), 500
+
+
+@app.route('/api/playbooks')
+def get_playbooks():
+    """Get SOC playbook definitions"""
+    playbooks = [
+        {
+            "id": "pb-phishing",
+            "title": "Phishing Email Response",
+            "category": "Incident Response",
+            "severity": "high",
+            "steps": [
+                "Quarantine the suspicious email in mail gateway",
+                "Extract IOCs: URLs, attachments, sender domain",
+                "Search MISP for known IOCs → /api/misp/search",
+                "Run attachment through CyberChef (hash, decode)",
+                "Check Wazuh alerts for affected endpoints",
+                "Block IOCs via Suricata rules",
+                "Document findings in TheHive case",
+                "Notify affected users and management"
+            ],
+            "tools": ["MISP", "CyberChef", "Wazuh", "Suricata", "TheHive"],
+            "estimated_time": "30-60 min"
+        },
+        {
+            "id": "pb-malware",
+            "title": "Malware Detection & Containment",
+            "category": "Incident Response",
+            "severity": "critical",
+            "steps": [
+                "Isolate affected endpoint from network",
+                "Collect memory dump via Velociraptor",
+                "Run YARA scan on memory dump",
+                "Extract process artifacts and network IOCs",
+                "Search Arkime for lateral movement traffic",
+                "Correlate alerts in Wazuh SIEM",
+                "Deploy Sigma rules for detection",
+                "Create TheHive case with full timeline",
+                "Restore from clean backup after cleanup"
+            ],
+            "tools": ["Velociraptor", "Wazuh", "Arkime", "MISP", "TheHive", "Shuffle"],
+            "estimated_time": "2-4 hours"
+        },
+        {
+            "id": "pb-ransomware",
+            "title": "Ransomware Incident Response",
+            "category": "Incident Response",
+            "severity": "critical",
+            "steps": [
+                "Immediately disconnect infected systems",
+                "Preserve system state via Velociraptor",
+                "Identify ransomware family via YARA rules",
+                "Check Wazuh for initial access vector",
+                "Search Arkime for C2 communications",
+                "Notify management and legal team",
+                "Collect and analyze ransom note IOCs in MISP",
+                "Coordinate recovery from clean backups",
+                "Document full timeline in TheHive"
+            ],
+            "tools": ["Velociraptor", "Wazuh", "Arkime", "MISP", "TheHive"],
+            "estimated_time": "4-8 hours"
+        },
+        {
+            "id": "pb-bruteforce",
+            "title": "Brute Force Attack Response",
+            "category": "Threat Hunting",
+            "severity": "medium",
+            "steps": [
+                "Review Wazuh authentication failure alerts",
+                "Identify source IPs and target accounts",
+                "Check Arkime for full packet context",
+                "Block attacker IPs via Suricata rules",
+                "Check EveBox for Suricata rule hits",
+                "Search MISP for attacker IP reputation",
+                "Enforce MFA on targeted accounts",
+                "Create MISP event for IOC sharing"
+            ],
+            "tools": ["Wazuh", "Arkime", "Suricata", "EveBox", "MISP"],
+            "estimated_time": "30-60 min"
+        },
+        {
+            "id": "pb-insider-threat",
+            "title": "Insider Threat Investigation",
+            "category": "Threat Hunting",
+            "severity": "high",
+            "steps": [
+                "Collect Velociraptor forensic artifacts from endpoint",
+                "Review Wazuh audit logs for file access patterns",
+                "Search Arkime for unusual data exfiltration",
+                "Run Sigma rules for insider threat detection",
+                "Correlate DLP events with SIEM alerts",
+                "Document chain of evidence",
+                "Coordinate with HR and Legal",
+                "Create TheHive case for tracking"
+            ],
+            "tools": ["Velociraptor", "Wazuh", "Arkime", "TheHive", "Shuffle"],
+            "estimated_time": "2-6 hours"
+        },
+        {
+            "id": "pb-vuln-scan",
+            "title": "Vulnerability Assessment",
+            "category": "Vulnerability Management",
+            "severity": "medium",
+            "steps": [
+                "Review Wazuh vulnerability scanner reports",
+                "Cross-reference CVEs with MISP threat intel",
+                "Prioritize by CVSS score and asset criticality",
+                "Generate remediation tickets in TheHive",
+                "Deploy Suricata rules for active CVEs",
+                "Trigger Shuffle automated patch workflow",
+                "Validate remediation with Velociraptor query",
+                "Update MISP with remediation status"
+            ],
+            "tools": ["Wazuh", "MISP", "TheHive", "Shuffle", "Suricata"],
+            "estimated_time": "1-2 hours"
+        }
+    ]
+    return jsonify({"playbooks": playbooks, "total": len(playbooks)})
+
+
 if __name__ == '__main__':
-    logger.info(f"🚀 Starting SOC-CyberDeck Portal on port {PORT}")
-    logger.info(f"📱 Access the portal at: http://localhost:{PORT}")
-    logger.info(f"🔧 API endpoints available at: http://localhost:{PORT}/api/")
+
+    logger.info(f"🚀 Starting SOC-CyberDeck Portal")
+    logger.info(f"📱 HTTP  access: http://localhost:{PORT}")
+    logger.info(f"🔒 HTTPS access: https://localhost:{HTTPS_PORT}")
+    logger.info(f"🔧 API endpoints: http://localhost:{PORT}/api/")
 
     try:
         # Log initial startup
@@ -2665,7 +3036,7 @@ if __name__ == '__main__':
             level="info"
         )
 
-        # Start container monitoring in a separate thread to avoid blocking
+        # Start container monitoring in a background thread
         def start_monitoring_async():
             try:
                 container_monitor.start_monitoring()
@@ -2676,23 +3047,37 @@ if __name__ == '__main__':
             target=start_monitoring_async, daemon=True)
         monitoring_thread.start()
 
-        # Start the Flask app with HTTPS support
+        # Always start HTTP server on PORT (5500) for healthcheck + plain browser access
+        def run_http():
+            logger.info(f"🌐 HTTP server running on port {PORT}")
+            app.run(host='0.0.0.0', port=PORT, debug=False,
+                    threaded=True, use_reloader=False)
+
+        http_thread = threading.Thread(target=run_http, daemon=True)
+        http_thread.start()
+        logger.info(f"✅ HTTP server started on port {PORT}")
+
+        # Start HTTPS server on HTTPS_PORT (5443) if certs exist
         if ENABLE_HTTPS and os.path.exists(SSL_CERT_PATH) and os.path.exists(SSL_KEY_PATH):
             ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             ssl_context.load_cert_chain(SSL_CERT_PATH, SSL_KEY_PATH)
-
-            logger.info(f"🔒 Starting HTTPS server on port {HTTPS_PORT}")
+            logger.info(f"🔒 HTTPS server running on port {HTTPS_PORT}")
             changelog_manager.add_entry(
-                "system_startup", f"Portal started with HTTPS on port {HTTPS_PORT}", level="success")
+                "system_startup",
+                f"Portal started — HTTP:{PORT} + HTTPS:{HTTPS_PORT}",
+                level="success"
+            )
             app.run(host='0.0.0.0', port=HTTPS_PORT, debug=False,
-                    threaded=True, ssl_context=ssl_context)
+                    threaded=True, ssl_context=ssl_context, use_reloader=False)
         else:
-            logger.warning(
-                "⚠️  SSL certificates not found, starting HTTP server")
-            logger.info(f"🌐 Starting HTTP server on port {PORT}")
+            logger.warning("⚠️  SSL certificates not found — HTTP only mode")
             changelog_manager.add_entry(
-                "system_startup", f"Portal started with HTTP on port {PORT}", level="warning")
-            app.run(host='0.0.0.0', port=PORT, debug=False, threaded=True)
+                "system_startup",
+                f"Portal started — HTTP only on port {PORT}",
+                level="warning"
+            )
+            # Block main thread so the HTTP daemon thread keeps running
+            http_thread.join()
 
     except KeyboardInterrupt:
         logger.info("Shutting down SOC-CyberDeck Portal...")
@@ -2702,6 +3087,6 @@ if __name__ == '__main__':
         logger.error(f"Error starting server: {e}")
         changelog_manager.add_entry(
             "system_error", f"Server startup error: {e}", level="error")
-        # Don't exit immediately, try to log the error
         time.sleep(5)
         sys.exit(1)
+

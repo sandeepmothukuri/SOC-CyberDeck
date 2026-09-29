@@ -117,6 +117,58 @@ The centerpiece of this cyber range is the custom **CyberDeck Web Management Con
 
 ---
 
+## 📸 Dashboard Screenshots
+
+> All screenshots below are taken directly from the **live running SOC-CyberDeck portal** — no mockups or stock images.
+
+### 🔧 Tools Tab — All 15 Security Tools at a Glance
+Each tool card shows live container status, category label, and one-click access to **Open**, **Credentials**, **Info**, **Start**, **Restart**, and **Stop** — no command line needed.
+
+![SOC-CyberDeck Tools Tab](docs/screenshots/dashboard-live-tools.png)
+
+---
+
+### 📊 Metrics Tab — Real-Time SOC Health Monitor
+Live CPU, memory, disk usage, container health grid, security events timeline, category health breakdown, and Docker network statistics — all auto-refreshing every 30 seconds.
+
+![SOC-CyberDeck Metrics Tab](docs/screenshots/dashboard-live-metrics.png)
+
+---
+
+### 🎯 Threat Hunting Tab — YARA & Sigma Rule Engine
+1,247+ YARA rules and 3,891+ Sigma rules pre-loaded. Run on-demand file system scans, convert Sigma rules to Elasticsearch/OpenSearch/Splunk query syntax, and view live match results in the terminal output panel.
+
+![SOC-CyberDeck Hunting Tab](docs/screenshots/dashboard-live-hunting.png)
+
+---
+
+### 🧠 Threat Intel Tab — MISP IOC Search
+Search IP addresses, hashes, domains, and CVEs directly against your local MISP instance. View event confidence, threat actor attribution, and TLP classification — without navigating away from the dashboard.
+
+![SOC-CyberDeck Intel Tab](docs/screenshots/dashboard-live-intel.png)
+
+---
+
+### 🤖 Agents Tab — One-Click Agent Deployment
+Generate ready-to-paste agent installation commands for Velociraptor and Wazuh on **Windows, Linux, and macOS** — server IP and certificates pre-filled. No manual configuration required.
+
+![SOC-CyberDeck Agents Tab](docs/screenshots/dashboard-live-agents.png)
+
+---
+
+## ⚡ New Dashboard Features (v2.0+)
+
+| Feature | Description | API Endpoint |
+|:---|:---|:---|
+| **🚨 Smart Alerts** | Real-time alerts for stopped tools, degraded health, and system errors | `/api/alerts` |
+| **▶️ Quick Actions** | One-click: Force Start All, Sync Threat Intel, Update Rules, Export Logs | `/api/quick-actions` |
+| **📜 SOC Playbooks** | 6 built-in IR playbooks: Phishing, Malware, Ransomware, Brute Force, Insider Threat, Vuln Scan | `/api/playbooks` |
+| **🌐 Network Overview** | All Docker networks, cyberdeck-net status, subnet ranges | `/api/network/overview` |
+| **📦 Container Logs** | View last N log lines from any container directly in the browser | `/api/containers/<name>/logs` |
+| **💻 Resource Usage** | Per-container CPU%, memory usage, and network I/O via `docker stats` | `/api/system/resource-usage` |
+| **📋 Audit Log** | Every portal action logged with timestamp, user, and severity | `/api/changelog` |
+
+
 ## 🔌 Integrated Tool Labels & Practical Demonstrations
 
 SOC-CyberDeck categorizes each tool by its operational blue-team responsibility:

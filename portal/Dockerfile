@@ -35,18 +35,19 @@ RUN git config --global --add safe.directory /opt/yara-rules && \
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p /app/logs
+RUN mkdir -p /app/logs /app/ssl
 
-# Expose port
-EXPOSE 5500
+# Expose both HTTP and HTTPS ports
+EXPOSE 5500 5443
 
 # Set environment variables
 ENV PORT=5500
+ENV HTTPS_PORT=5443
 ENV FLASK_ENV=production
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5500/health || exit 1
+# Health check — HTTP port 5500 is always available (dual-server mode)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -sf http://localhost:5500/health || exit 1
 
 # Start the application
-CMD ["python3", "app.py"] 
+CMD ["python3", "app.py"]
