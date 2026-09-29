@@ -469,15 +469,16 @@ def index():
 
 @app.route('/api/containers')
 def get_containers():
-    """Get container count API endpoint"""
+    """Get container count and status API endpoint"""
     try:
-        count = container_monitor.get_container_count()
+        all_status = container_monitor.get_all_container_status()
+        count = len(all_status)
         changelog_manager.add_entry(
-            "api_call", f"Container count requested: {count} containers")
-        return jsonify({"count": count})
+            "api_call", f"Container list requested: {count} containers")
+        return jsonify({"count": count, "containers": all_status})
     except Exception as e:
         logger.error(f"Error in container count API: {e}")
-        return jsonify({"count": "Unknown", "error": str(e)}), 500
+        return jsonify({"count": "Unknown", "containers": {}, "error": str(e)}), 500
 
 
 @app.route('/api/containers/status')

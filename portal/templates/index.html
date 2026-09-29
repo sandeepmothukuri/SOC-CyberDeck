@@ -1825,6 +1825,20 @@
                     <button class="nav-link" id="metrics-tab" data-bs-toggle="tab" data-bs-target="#metrics"
                         type="button" role="tab"><i class="fas fa-chart-line me-2"></i>Metrics</button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts"
+                        type="button" role="tab"><i class="fas fa-bell me-2"></i>Alerts
+                        <span id="alertBadge" class="badge bg-danger ms-1" style="display:none;font-size:0.65rem;">0</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="playbooks-tab" data-bs-toggle="tab" data-bs-target="#playbooks"
+                        type="button" role="tab"><i class="fas fa-book me-2"></i>Playbooks</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs"
+                        type="button" role="tab"><i class="fas fa-terminal me-2"></i>Logs</button>
+                </li>
             </ul>
 
             <!-- Tab Content -->
@@ -2816,6 +2830,146 @@
                         </div>
                     </div>
 
+                </div>
+
+                <!-- ═══════════════════════════════════════════ ALERTS TAB ═══ -->
+                <div class="tab-pane fade" id="alerts" role="tabpanel">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="text-white mb-1"><i class="fas fa-bell text-warning me-2"></i>Alert Center</h4>
+                                <p class="text-muted mb-0">Real-time alerts for stopped tools, system health, and errors</p>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="filterAlerts('all')">All</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="filterAlerts('critical')">Critical</button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="filterAlerts('high')">High</button>
+                                <button class="btn btn-sm btn-outline-info" onclick="filterAlerts('medium')">Medium</button>
+                                <button class="btn btn-sm btn-primary" onclick="loadAlerts()"><i class="fas fa-sync me-1"></i>Refresh</button>
+                            </div>
+                        </div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-dark border-danger text-center p-3">
+                                    <div class="text-danger" style="font-size:2rem;font-weight:700" id="alertCountCritical">0</div>
+                                    <div class="text-muted small">Critical</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-dark border-warning text-center p-3">
+                                    <div class="text-warning" style="font-size:2rem;font-weight:700" id="alertCountHigh">0</div>
+                                    <div class="text-muted small">High</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-dark border-info text-center p-3">
+                                    <div class="text-info" style="font-size:2rem;font-weight:700" id="alertCountMedium">0</div>
+                                    <div class="text-muted small">Medium</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="card bg-dark border-secondary text-center p-3">
+                                    <div class="text-white" style="font-size:2rem;font-weight:700" id="alertCountTotal">0</div>
+                                    <div class="text-muted small">Total</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-4">
+                            <div class="card-header border-secondary">
+                                <h6 class="text-white mb-0"><i class="fas fa-bolt text-warning me-2"></i>Quick Actions</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2" id="quickActionsGrid">
+                                    <div class="col-12 text-center text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="alertsList">
+                            <div class="text-center text-muted py-5"><div class="spinner-border text-warning mb-3"></div><p>Loading alerts...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════ PLAYBOOKS TAB ═══ -->
+                <div class="tab-pane fade" id="playbooks" role="tabpanel">
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h4 class="text-white mb-1"><i class="fas fa-book text-primary me-2"></i>SOC Response Playbooks</h4>
+                                <p class="text-muted mb-0">Step-by-step incident response guides — click any card to expand</p>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="filterPlaybooks('all')">All</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="filterPlaybooks('Incident Response')">IR</button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="filterPlaybooks('Threat Hunting')">Hunting</button>
+                                <button class="btn btn-sm btn-outline-info" onclick="filterPlaybooks('Vulnerability Management')">Vuln</button>
+                            </div>
+                        </div>
+                        <div class="row g-3" id="playbooksGrid">
+                            <div class="col-12 text-center text-muted py-5"><div class="spinner-border text-primary mb-3"></div><p>Loading playbooks...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════════════════════════════════════ LOGS TAB ═══ -->
+                <div class="tab-pane fade" id="logs" role="tabpanel">
+                    <div class="p-4">
+                        <div class="mb-4">
+                            <h4 class="text-white mb-1"><i class="fas fa-terminal text-success me-2"></i>Container Log Viewer</h4>
+                            <p class="text-muted mb-0">Live log output from any running container</p>
+                        </div>
+                        <div class="card bg-dark border-secondary mb-3">
+                            <div class="card-body">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-5">
+                                        <label class="text-muted small mb-1">Container</label>
+                                        <select class="form-select bg-dark text-white border-secondary" id="logContainerSelect">
+                                            <option value="">-- choose a container --</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="text-muted small mb-1">Lines</label>
+                                        <select class="form-select bg-dark text-white border-secondary" id="logLinesSelect">
+                                            <option value="50">Last 50</option>
+                                            <option value="100">Last 100</option>
+                                            <option value="200">Last 200</option>
+                                            <option value="500">Last 500</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="text-muted small mb-1">Auto-refresh (5s)</label>
+                                        <div class="form-check form-switch mt-1">
+                                            <input class="form-check-input" type="checkbox" id="logAutoRefresh">
+                                            <label class="form-check-label text-muted small" for="logAutoRefresh">On</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 d-flex gap-2">
+                                        <button class="btn btn-success flex-grow-1" onclick="fetchContainerLogs()"><i class="fas fa-play me-1"></i>Fetch</button>
+                                        <button class="btn btn-outline-secondary" onclick="clearLogOutput()" title="Clear"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="fas fa-search"></i></span>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="logSearchInput"
+                                placeholder="Filter lines... (e.g. ERROR, WARNING)" oninput="filterLogLines()">
+                            <button class="btn btn-outline-secondary" onclick="document.getElementById('logSearchInput').value='';filterLogLines()">Clear</button>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small" id="logStatusBar">No logs loaded</span>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-danger"   onclick="highlightLogLevel('ERROR')">ERR</button>
+                                <button class="btn btn-sm btn-outline-warning"  onclick="highlightLogLevel('WARN')">WARN</button>
+                                <button class="btn btn-sm btn-outline-info"     onclick="highlightLogLevel('INFO')">INFO</button>
+                                <button class="btn btn-sm btn-outline-secondary" onclick="highlightLogLevel('')">All</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="copyLogs()" title="Copy to clipboard"><i class="fas fa-copy"></i></button>
+                            </div>
+                        </div>
+                        <div id="logOutput" style="background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px;min-height:450px;max-height:600px;overflow-y:auto;font-family:'Courier New',Courier,monospace;font-size:0.8rem;line-height:1.6;color:#e6edf3;white-space:pre-wrap;word-break:break-all;">
+                            <span style="color:#6e7681;">&#x25B6;  Select a container above and click Fetch to load logs.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -5738,6 +5892,347 @@
                 });
             }
         });
+
+        // ═══════════════════════════════════════════════════════════════════
+        // ALERTS TAB — load alerts + quick actions, filter, badge update
+        // ═══════════════════════════════════════════════════════════════════
+        let _allAlerts = [];
+        let _alertFilter = 'all';
+
+        async function loadAlerts() {
+            try {
+                const [alertResp, actionResp] = await Promise.all([
+                    fetch('/api/alerts'),
+                    fetch('/api/quick-actions')
+                ]);
+                const alertData  = await alertResp.json();
+                const actionData = await actionResp.json();
+                _allAlerts = alertData.alerts || [];
+
+                // Update summary counters
+                document.getElementById('alertCountCritical').textContent = alertData.critical || 0;
+                document.getElementById('alertCountHigh').textContent     = alertData.high     || 0;
+                document.getElementById('alertCountMedium').textContent   = alertData.medium   || 0;
+                document.getElementById('alertCountTotal').textContent    = alertData.total    || 0;
+
+                // Update nav badge
+                const badge = document.getElementById('alertBadge');
+                if (alertData.total > 0) {
+                    badge.textContent = alertData.total;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+
+                renderAlerts(_alertFilter);
+                renderQuickActions(actionData.actions || []);
+
+            } catch(e) {
+                document.getElementById('alertsList').innerHTML =
+                    '<div class="alert alert-danger">Failed to load alerts: ' + e.message + '</div>';
+            }
+        }
+
+        function filterAlerts(level) {
+            _alertFilter = level;
+            renderAlerts(level);
+        }
+
+        function renderAlerts(filter) {
+            const container = document.getElementById('alertsList');
+            const filtered = filter === 'all' ? _allAlerts : _allAlerts.filter(a => a.severity === filter);
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="text-center py-5 text-success"><i class="fas fa-check-circle fa-3x mb-3"></i><h5>No alerts found</h5><p class="text-muted">Your SOC environment looks healthy!</p></div>';
+                return;
+            }
+
+            const colors = { critical: 'danger', high: 'warning', medium: 'info', low: 'secondary' };
+            const icons  = { critical: 'fa-exclamation-circle', high: 'fa-exclamation-triangle', medium: 'fa-info-circle', low: 'fa-bell' };
+
+            container.innerHTML = filtered.map(a => `
+                <div class="card bg-dark border-${colors[a.severity]||'secondary'} mb-3">
+                    <div class="card-body d-flex align-items-start gap-3">
+                        <div class="mt-1">
+                            <i class="fas ${icons[a.severity]||'fa-bell'} text-${colors[a.severity]||'secondary'} fa-lg"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <span class="badge bg-${colors[a.severity]||'secondary'} me-2 text-uppercase">${a.severity}</span>
+                                    <strong class="text-white">${escHtml(a.title)}</strong>
+                                </div>
+                                <small class="text-muted ms-2">${new Date(a.timestamp).toLocaleTimeString()}</small>
+                            </div>
+                            <p class="text-muted mb-1 mt-1" style="font-size:0.9rem">${escHtml(a.message)}</p>
+                            <span class="badge bg-secondary bg-opacity-25 text-secondary">${escHtml(a.category)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderQuickActions(actions) {
+            const grid = document.getElementById('quickActionsGrid');
+            const colorMap = { primary:'primary', success:'success', warning:'warning', danger:'danger', info:'info', secondary:'secondary' };
+            grid.innerHTML = actions.map(a => `
+                <div class="col-6 col-md-4">
+                    <button class="btn btn-outline-${colorMap[a.color]||'secondary'} w-100 text-start p-3" onclick="runQuickAction('${a.endpoint}','${a.method}','${escHtml(a.label)}')" title="${escHtml(a.description)}">
+                        <i class="${a.icon} me-2"></i>${escHtml(a.label)}
+                        <div class="text-muted small mt-1">${escHtml(a.description)}</div>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        async function runQuickAction(endpoint, method, label) {
+            showToast('Running', label + '…', 'info');
+            try {
+                const opts = method === 'POST' ? { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' } : {};
+                const res  = await fetch(endpoint, opts);
+                const data = await res.json();
+                showToast('Done', label + ' completed', 'success');
+            } catch(e) {
+                showToast('Error', label + ' failed: ' + e.message, 'danger');
+            }
+        }
+
+        function escHtml(str) {
+            return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // Auto-load alerts when Alerts tab is clicked
+        document.getElementById('alerts-tab').addEventListener('shown.bs.tab', function() {
+            loadAlerts();
+        });
+
+        // ═══════════════════════════════════════════════════════════════════
+        // PLAYBOOKS TAB
+        // ═══════════════════════════════════════════════════════════════════
+        let _allPlaybooks = [];
+
+        async function loadPlaybooks() {
+            try {
+                const resp = await fetch('/api/playbooks');
+                const data = await resp.json();
+                _allPlaybooks = data.playbooks || [];
+                renderPlaybooks('all');
+            } catch(e) {
+                document.getElementById('playbooksGrid').innerHTML =
+                    '<div class="col-12"><div class="alert alert-danger">Failed to load playbooks: ' + e.message + '</div></div>';
+            }
+        }
+
+        function filterPlaybooks(category) {
+            renderPlaybooks(category);
+        }
+
+        function renderPlaybooks(category) {
+            const grid = document.getElementById('playbooksGrid');
+            const list = category === 'all' ? _allPlaybooks : _allPlaybooks.filter(p => p.category === category);
+
+            if (list.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center text-muted py-4"><i class="fas fa-book fa-3x mb-3"></i><p>No playbooks in this category</p></div>';
+                return;
+            }
+
+            const sevColor = { critical:'danger', high:'warning', medium:'info', low:'secondary' };
+            const catColor = { 'Incident Response':'danger', 'Threat Hunting':'warning', 'Vulnerability Management':'info' };
+
+            grid.innerHTML = list.map((p,i) => `
+                <div class="col-12 col-lg-6">
+                    <div class="card bg-dark border-${sevColor[p.severity]||'secondary'} h-100">
+                        <div class="card-header border-${sevColor[p.severity]||'secondary'} d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="badge bg-${sevColor[p.severity]||'secondary'} me-2 text-uppercase">${p.severity}</span>
+                                <span class="badge bg-${catColor[p.category]||'secondary'} bg-opacity-25 text-${catColor[p.category]||'secondary'}">${p.category}</span>
+                                <h6 class="text-white mt-2 mb-0">${escHtml(p.title)}</h6>
+                            </div>
+                            <div class="text-end ms-2">
+                                <small class="text-muted d-block"><i class="fas fa-clock me-1"></i>${escHtml(p.estimated_time)}</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ol class="text-muted ps-3 mb-3" style="font-size:0.88rem;line-height:1.7">
+                                ${p.steps.map(s => '<li>' + escHtml(s) + '</li>').join('')}
+                            </ol>
+                            <div>
+                                <small class="text-muted me-1">Tools:</small>
+                                ${p.tools.map(t => '<span class="badge bg-secondary bg-opacity-50 text-light me-1">' + escHtml(t) + '</span>').join('')}
+                            </div>
+                        </div>
+                        <div class="card-footer border-secondary d-flex justify-content-between align-items-center">
+                            <small class="text-muted"><i class="fas fa-list-ol me-1"></i>${p.steps.length} steps</small>
+                            <button class="btn btn-sm btn-outline-primary" onclick="printPlaybook('${p.id}')">
+                                <i class="fas fa-print me-1"></i>Print
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function printPlaybook(id) {
+            const pb = _allPlaybooks.find(p => p.id === id);
+            if (!pb) return;
+            const w = window.open('','_blank','width=700,height=800');
+            w.document.write('<html><head><title>' + pb.title + '</title><style>body{font-family:Arial,sans-serif;padding:20px;} ol{line-height:2;} .tools{margin-top:12px;}</style></head><body>');
+            w.document.write('<h2>' + pb.title + '</h2>');
+            w.document.write('<p><strong>Category:</strong> ' + pb.category + ' | <strong>Severity:</strong> ' + pb.severity + ' | <strong>Est. Time:</strong> ' + pb.estimated_time + '</p>');
+            w.document.write('<h4>Steps:</h4><ol>' + pb.steps.map(s => '<li>' + s + '</li>').join('') + '</ol>');
+            w.document.write('<div class="tools"><strong>Tools:</strong> ' + pb.tools.join(', ') + '</div>');
+            w.document.write('</body></html>');
+            w.document.close();
+            w.print();
+        }
+
+        // Auto-load when Playbooks tab shown
+        document.getElementById('playbooks-tab').addEventListener('shown.bs.tab', function() {
+            loadPlaybooks();
+        });
+
+        // ═══════════════════════════════════════════════════════════════════
+        // LOGS TAB — container picker, fetch, filter, highlight, auto-refresh
+        // ═══════════════════════════════════════════════════════════════════
+        let _logAutoRefreshTimer = null;
+        let _rawLogLines = [];
+
+        async function populateLogContainerList() {
+            try {
+                const resp = await fetch('/api/containers/status');
+                const data = await resp.json();
+                const sel = document.getElementById('logContainerSelect');
+                const containers = data.containers || data;
+                const names = Object.keys(containers);
+                sel.innerHTML = '<option value="">-- choose a container --</option>' +
+                    names.map(n => `<option value="${escHtml(n)}">${escHtml(n)} (${containers[n].status||'?'})</option>`).join('');
+            } catch(e) {
+                console.error('Could not list containers:', e);
+            }
+        }
+
+        async function fetchContainerLogs() {
+            const name  = document.getElementById('logContainerSelect').value;
+            const lines = document.getElementById('logLinesSelect').value || 50;
+            const autoR = document.getElementById('logAutoRefresh').checked;
+
+            if (!name) {
+                showToast('Select Container', 'Please choose a container first', 'warning');
+                return;
+            }
+
+            // Clear previous auto-refresh
+            if (_logAutoRefreshTimer) clearInterval(_logAutoRefreshTimer);
+
+            await _doFetchLogs(name, lines);
+
+            if (autoR) {
+                _logAutoRefreshTimer = setInterval(() => _doFetchLogs(name, lines), 5000);
+            }
+        }
+
+        async function _doFetchLogs(name, lines) {
+            const statusBar = document.getElementById('logStatusBar');
+            statusBar.textContent = 'Fetching logs…';
+            try {
+                const resp = await fetch('/api/containers/' + encodeURIComponent(name) + '/logs?lines=' + lines);
+                const data = await resp.json();
+                _rawLogLines = data.lines || [];
+                renderLogOutput(_rawLogLines);
+                statusBar.textContent = name + ' — ' + _rawLogLines.length + ' lines — ' + new Date().toLocaleTimeString();
+            } catch(e) {
+                document.getElementById('logOutput').innerHTML = '<span style="color:#ff6b6b">Error: ' + escHtml(e.message) + '</span>';
+                statusBar.textContent = 'Error loading logs';
+            }
+        }
+
+        function renderLogOutput(lines) {
+            const filter = (document.getElementById('logSearchInput').value || '').toLowerCase();
+            const out = document.getElementById('logOutput');
+            const filtered = filter ? lines.filter(l => l.toLowerCase().includes(filter)) : lines;
+
+            if (filtered.length === 0) {
+                out.innerHTML = '<span style="color:#6e7681">No log lines match the current filter.</span>';
+                return;
+            }
+
+            out.innerHTML = filtered.map(line => {
+                let color = '#e6edf3';
+                if (/error|critical|fatal|exception/i.test(line))   color = '#ff7b72';
+                else if (/warn|warning/i.test(line))                 color = '#d29922';
+                else if (/info/i.test(line))                         color = '#79c0ff';
+                else if (/debug/i.test(line))                        color = '#6e7681';
+                return '<span style="color:' + color + '">' + escHtml(line) + '</span>';
+            }).join('\n');
+
+            // Scroll to bottom
+            out.scrollTop = out.scrollHeight;
+        }
+
+        function filterLogLines() {
+            renderLogOutput(_rawLogLines);
+        }
+
+        function highlightLogLevel(level) {
+            const input = document.getElementById('logSearchInput');
+            input.value = level;
+            filterLogLines();
+        }
+
+        function clearLogOutput() {
+            _rawLogLines = [];
+            document.getElementById('logOutput').innerHTML = '<span style="color:#6e7681;">&#x25B6;  Log cleared. Select a container and click Fetch.</span>';
+            document.getElementById('logStatusBar').textContent = 'No logs loaded';
+            document.getElementById('logSearchInput').value = '';
+            if (_logAutoRefreshTimer) { clearInterval(_logAutoRefreshTimer); _logAutoRefreshTimer = null; }
+        }
+
+        function copyLogs() {
+            const text = _rawLogLines.join('\n');
+            navigator.clipboard.writeText(text).then(() => showToast('Copied', 'Log output copied to clipboard', 'success'));
+        }
+
+        // Stop auto-refresh when leaving logs tab
+        document.getElementById('logs-tab').addEventListener('hidden.bs.tab', function() {
+            if (_logAutoRefreshTimer) { clearInterval(_logAutoRefreshTimer); _logAutoRefreshTimer = null; }
+        });
+
+        // Populate container list when logs tab is shown
+        document.getElementById('logs-tab').addEventListener('shown.bs.tab', function() {
+            populateLogContainerList();
+        });
+
+        // Stop auto-refresh on page unload
+        window.addEventListener('beforeunload', function() {
+            if (_logAutoRefreshTimer) clearInterval(_logAutoRefreshTimer);
+        });
+
+        // ═══════════════════════════════════════════════════════════════════
+        // INITIAL ALERT BADGE POLL — check every 60s in background
+        // ═══════════════════════════════════════════════════════════════════
+        async function pollAlertBadge() {
+            try {
+                const resp = await fetch('/api/alerts');
+                const data = await resp.json();
+                const badge = document.getElementById('alertBadge');
+                if (data.total > 0) {
+                    badge.textContent = data.total;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+                if (typeof _allAlerts !== 'undefined' && document.getElementById('alerts').classList.contains('active')) {
+                    _allAlerts = data.alerts || [];
+                    renderAlerts(_alertFilter);
+                    document.getElementById('alertCountCritical').textContent = data.critical || 0;
+                    document.getElementById('alertCountHigh').textContent     = data.high     || 0;
+                    document.getElementById('alertCountMedium').textContent   = data.medium   || 0;
+                    document.getElementById('alertCountTotal').textContent    = data.total    || 0;
+                }
+            } catch(e) { /* silent */ }
+        }
+        setInterval(pollAlertBadge, 60000);
+        setTimeout(pollAlertBadge, 3000); // First poll 3s after page load
 
     </script>
 </body>

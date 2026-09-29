@@ -156,6 +156,27 @@ Generate ready-to-paste agent installation commands for Velociraptor and Wazuh o
 
 ---
 
+### 🚨 Alerts Tab — Real-Time SOC Alert Center & Quick Actions
+Dynamic threat alert center tracking stopped security tools, container health score degradation, and system warnings. Features one-click **Quick Actions** to Force Start All, Sync Threat Intel, Update Hunting Rules, and Export Audit Logs.
+
+![SOC-CyberDeck Alerts Tab](docs/screenshots/dashboard-live-alerts.png)
+
+---
+
+### 📜 Playbooks Tab — Interactive SOC Incident Response
+Six enterprise-grade incident response playbooks (Phishing, Malware Containment, Ransomware, Brute Force, Insider Threat, Vulnerability Assessment) with numbered analyst steps, associated security tools, estimated handling times, and one-click printable briefing cards.
+
+![SOC-CyberDeck Playbooks Tab](docs/screenshots/dashboard-live-playbooks.png)
+
+---
+
+### 📦 Container Logs Tab — Live Streaming Terminal
+Inspect stdout and stderr logs for any running container directly within the web console. Includes real-time line tailing (50–500 lines), regex search filtering, error/warn syntax highlighting, and 5-second auto-refresh.
+
+![SOC-CyberDeck Logs Tab](docs/screenshots/dashboard-live-logs.png)
+
+---
+
 ## ⚡ New Dashboard Features (v2.0+)
 
 | Feature | Description | API Endpoint |
