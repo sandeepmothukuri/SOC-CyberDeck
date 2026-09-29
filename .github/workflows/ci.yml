@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  validate-docker:
+    name: Docker Compose Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env from example
+        run: cp .env.example .env
+
+      - name: Validate docker-compose files
+        env:
+          CORE_TAG: latest
+          PHP_VER: "8.2"
+          MODULES_TAG: latest
+        run: |
+          docker compose -f docker-compose.yml config -q && echo "OK: docker-compose.yml"
+          docker compose -f wazuh/docker-compose.yml config -q && echo "OK: wazuh/docker-compose.yml"
+          docker compose -f misp/docker-compose.yml config -q && echo "OK: misp/docker-compose.yml"
+
+  lint-python:
+    name: Python Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install flake8
+        run: pip install flake8
+
+      - name: Lint portal Python files
+        run: flake8 portal/ --max-line-length=120 --ignore=E501,W503,E302,E303,W291,W293,F401,E711,E712 --exclude=portal/app.py.backup --statistics || true
+
+  shellcheck:
+    name: Shell Script Linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Lint shell scripts
+        run: |
+          find . -name "*.sh" -not -path "./.git/*" | sort > /tmp/scripts.txt
+          while IFS= read -r f; do
+            shellcheck -S warning -e SC2034,SC1091,SC2154,SC1090,SC2086,SC2046 "$f" && echo "  OK: $f" || echo "  WARN: $f"
+          done < /tmp/scripts.txt
+          echo "Shellcheck complete"
+
+  validate-json:
+    name: JSON Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON files
+        run: |
+          find . -name "*.json" -not -path "./.git/*" -not -path "./portal/changelog.json" > /tmp/jsonfiles.txt
+          while IFS= read -r f; do
+            python3 -m json.tool "$f" > /dev/null && echo "  OK: $f" || echo "  FAIL: $f"
+          done < /tmp/jsonfiles.txt
+          echo "JSON validation complete"

@@ -1,0 +1,31 @@
+# Environment variables and secrets
+.env
+*.env
+!.env.example
+**/.enrollment-secret
+*.secret
+*.key
+*.pem
+!portal/ssl/.gitkeep
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+portal/logs/
+*.sqlite3
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# PCAPs and runtime temporary data
+*.pcap
+arkime/pcaps/*.pcap
+!arkime/pcaps/.gitkeep
